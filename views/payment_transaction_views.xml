@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Menu Transactions dans Facturation -->
+    <menuitem id="menu_payment_transaction"
+              name="Transactions de paiement"
+              parent="account.menu_finance"
+              action="payment.action_payment_transaction"
+              sequence="15"
+              groups="account.group_account_invoice"/>
+
+    <!-- Bouton sur le formulaire de transaction de paiement -->
+    <record id="payment_transaction_form_inherit" model="ir.ui.view">
+        <field name="name">payment.transaction.form.inherit.fromtome</field>
+        <field name="model">payment.transaction</field>
+        <field name="inherit_id" ref="payment.payment_transaction_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//header" position="inside">
+                <button name="action_set_done" 
+                        type="object" 
+                        string="Confirmer le paiement" 
+                        class="btn-primary"
+                        invisible="state != 'pending'"
+                        groups="account.group_account_invoice"/>
+                <button name="action_set_canceled" 
+                        type="object" 
+                        string="Annuler" 
+                        class="btn-secondary"
+                        invisible="state not in ('pending', 'draft')"
+                        groups="account.group_account_invoice"/>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Action serveur pour confirmer depuis la liste -->
+    <record id="action_payment_transaction_set_done" model="ir.actions.server">
+        <field name="name">Confirmer le paiement</field>
+        <field name="model_id" ref="payment.model_payment_transaction"/>
+        <field name="binding_model_id" ref="payment.model_payment_transaction"/>
+        <field name="binding_view_types">list,form</field>
+        <field name="state">code</field>
+        <field name="group_ids" eval="[(4, ref('account.group_account_invoice'))]"/>
+        <field name="code">
+if records:
+    for record in records:
+        if record.state == 'pending':
+            record._set_done()
+        </field>
+    </record>
+
+    <!-- Action serveur pour annuler depuis la liste -->
+    <record id="action_payment_transaction_set_canceled" model="ir.actions.server">
+        <field name="name">Annuler la transaction</field>
+        <field name="model_id" ref="payment.model_payment_transaction"/>
+        <field name="binding_model_id" ref="payment.model_payment_transaction"/>
+        <field name="binding_view_types">list,form</field>
+        <field name="state">code</field>
+        <field name="group_ids" eval="[(4, ref('account.group_account_invoice'))]"/>
+        <field name="code">
+if records:
+    for record in records:
+        if record.state in ('pending', 'draft'):
+            record._set_canceled()
+        </field>
+    </record>
+
+</odoo>
