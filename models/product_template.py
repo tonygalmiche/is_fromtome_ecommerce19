@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from odoo import fields, models
+from odoo import api, fields, models
 
 _COLISAGE = [
     ('1', 'Colis'),
@@ -15,6 +15,18 @@ class ProductTemplate(models.Model):
     is_colisage            = fields.Selection(string='Colisage', selection=_COLISAGE, required=True, tracking=True, default='1', help="Utilisé dans 'Préparation transfert entrepôt'")
     is_nb_pieces_par_colis = fields.Integer(string='Nb Pièces / colis', tracking=True)
     is_poids_net_colis     = fields.Float(string='Poids net colis (Kg)', digits='Stock Weight', tracking=True)
+    is_prix_colis          = fields.Float(string='Prix colis', digits='Product Price', compute='_compute_is_prix_colis')
+
+    @api.depends('uom_id', 'is_nb_pieces_par_colis', 'is_poids_net_colis')
+    def _compute_is_prix_colis(self):
+        for obj in self:
+            pricelist = obj._get_contextual_pricelist()
+            if pricelist:
+                unit_price = pricelist._get_product_price(obj, 1.0, currency=pricelist.currency_id)
+            else:
+                unit_price = obj.list_price
+            qty_colis = obj.is_poids_net_colis if obj.uom_id.name == 'kg' else obj.is_nb_pieces_par_colis
+            obj.is_prix_colis = unit_price * qty_colis
 
     def _filter_products_with_pricelist_price(self):
         """

@@ -29,4 +29,44 @@
         </field>
     </record>
 
+    <template id="product_colisage_info" name="Colisage Info" inherit_id="website_sale.product">
+        <xpath expr="//div[hasclass('o_wsale_product_details_content_section_cta')]" position="before">
+            <div class="o_wsale_product_details_content_section mb-4">
+                <table class="table table-sm table-borderless mb-0" style="max-width: 320px;">
+                    <tbody>
+                        <tr>
+                            <th class="text-muted fw-normal" style="width: 55%;">Unité de vente</th>
+                            <td><t t-esc="product.uom_id.name"/></td>
+                        </tr>
+                        <tr t-if="product.is_nb_pieces_par_colis">
+                            <th class="text-muted fw-normal">Nb pièces / colis</th>
+                            <td><t t-esc="product.is_nb_pieces_par_colis"/></td>
+                        </tr>
+                        <tr t-if="product.is_poids_net_colis">
+                            <th class="text-muted fw-normal">Poids net colis (Kg)</th>
+                            <td><t t-esc="'%.3g' % product.is_poids_net_colis"/></td>
+                        </tr>
+                        <tr t-if="product.is_prix_colis">
+                            <th class="text-muted fw-normal">Prix colis</th>
+                            <td><t t-esc="'%.2f €' % product.is_prix_colis"/></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </xpath>
+    </template>
+    <template id="product_tile_uom" name="Unité et prix colis sur tuile produit" inherit_id="website_sale.products_item">
+        <xpath expr="//h2[hasclass('o_wsale_products_item_title')]" position="attributes">
+            <attribute name="style">font-size: 0.9rem;</attribute>
+        </xpath>
+        <xpath expr="//div[hasclass('product_price')]" position="attributes">
+            <attribute name="style">font-size: 0.9rem;</attribute>
+        </xpath>
+        <xpath expr="//div[hasclass('product_price')]" position="inside">
+            <small class="text-muted ms-1">/ <t t-esc="product.uom_id.name"/>
+                <t t-if="product.is_prix_colis"> — soit <t t-esc="'%.2f' % product.is_prix_colis"/> €/colis</t>
+            </small>
+        </xpath>
+    </template>
+
 </odoo>
