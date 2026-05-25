@@ -1,10 +1,20 @@
 # -*- coding: utf-8 -*-
 
-from odoo import models
+from odoo import fields, models
+
+_COLISAGE = [
+    ('1', 'Colis'),
+    ('2', '1/2 colis'),
+    ('4', '1/4 colis'),
+]
 
 
 class ProductTemplate(models.Model):
     _inherit = 'product.template'
+
+    is_colisage            = fields.Selection(string='Colisage', selection=_COLISAGE, required=True, tracking=True, default='1', help="Utilisé dans 'Préparation transfert entrepôt'")
+    is_nb_pieces_par_colis = fields.Integer(string='Nb Pièces / colis', tracking=True)
+    is_poids_net_colis     = fields.Float(string='Poids net colis (Kg)', digits='Stock Weight', tracking=True)
 
     def _filter_products_with_pricelist_price(self):
         """
