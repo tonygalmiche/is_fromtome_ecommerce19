@@ -21,6 +21,7 @@ InfoSaône - Module Odoo 19 de e-commerce pour Fromtome
         'security/ir.model.access.csv',
         'views/payment_transaction_views.xml',
         'views/product_template_views.xml',
+        'views/shop_filters.xml',
     ],
     "assets": {
         "web.assets_backend": [
@@ -28,6 +29,7 @@ InfoSaône - Module Odoo 19 de e-commerce pour Fromtome
         ],
         "web.assets_frontend": [
             "is_fromtome_ecommerce19/static/src/js/nb_colis.js",
+            "is_fromtome_ecommerce19/static/src/js/shop_filters.js",
             "is_fromtome_ecommerce19/static/src/scss/website_sale.scss",
         ],
     },

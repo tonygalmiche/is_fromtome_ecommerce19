@@ -213,19 +213,35 @@
                         </tr>
                         <tr t-if="product.is_region_id">
                             <th class="text-muted fw-normal">Région d'origine</th>
-                            <td><t t-esc="product.is_region_id.name"/></td>
+                            <td>
+                                <a t-attf-href="#{shop_path}?region_ids=#{product.is_region_id.id}">
+                                    <t t-out="product.is_region_id.name"/>
+                                </a>
+                            </td>
                         </tr>
                         <tr t-if="product.is_type_article_id">
                             <th class="text-muted fw-normal">Type article</th>
-                            <td><t t-esc="product.is_type_article_id.name"/></td>
+                            <td>
+                                <a t-attf-href="#{shop_path}?type_article_ids=#{product.is_type_article_id.id}">
+                                    <t t-out="product.is_type_article_id.name"/>
+                                </a>
+                            </td>
                         </tr>
                         <tr t-if="product.is_traitement_thermique">
                             <th class="text-muted fw-normal">Traitement thermique</th>
-                            <td><t t-esc="product._fields['is_traitement_thermique'].convert_to_export(product.is_traitement_thermique, product)"/></td>
+                            <td>
+                                <a t-attf-href="#{shop_path}?traitement_thermique=#{product.is_traitement_thermique}">
+                                    <t t-out="product._fields['is_traitement_thermique'].convert_to_export(product.is_traitement_thermique, product)"/>
+                                </a>
+                            </td>
                         </tr>
                         <tr t-if="product.is_famille_fromage_id">
                             <th class="text-muted fw-normal">Famille de fromage</th>
-                            <td><t t-esc="product.is_famille_fromage_id.name"/></td>
+                            <td>
+                                <a t-attf-href="#{shop_path}?famille_fromage_ids=#{product.is_famille_fromage_id.id}">
+                                    <t t-out="product.is_famille_fromage_id.name"/>
+                                </a>
+                            </td>
                         </tr>
                      </tbody>
                 </table>

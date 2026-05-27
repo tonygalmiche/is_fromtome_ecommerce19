@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!--
+        Masquer catégories, étiquettes, et forcer la sidebar visible.
+    -->
+    <template id="is_fromtome_hide_categories"
+              inherit_id="website_sale.products"
+              name="Filtres sidebar Fromtome">
+
+        <!-- Désactive la liste de catégories dans la sidebar gauche.
+             Sans cela, Odoo affiche les catégories e-commerce (public_categ_ids)
+             que nous n'utilisons pas pour Fromtome. -->
+        <xpath expr="//t[@t-set='opt_wsale_categories']" position="replace">
+            <t t-set="opt_wsale_categories" t-value="False"/>
+        </xpath>
+
+        <!-- Désactive la barre de catégories horizontale en haut de la boutique.
+             Elle affiche les mêmes catégories e-commerce sous forme de filmstrip. -->
+        <xpath expr="//t[@t-set='opt_wsale_categories_top']" position="replace">
+            <t t-set="opt_wsale_categories_top" t-value="False"/>
+        </xpath>
+
+        <!-- Désactive le filtre par étiquettes (tags) dans la sidebar.
+             Les tags Odoo ne sont pas utilisés comme critères de filtrage pour Fromtome ;
+             on les remplace par les 4 filtres custom ci-dessous. -->
+        <xpath expr="//t[@t-set='opt_wsale_filter_tags']" position="replace">
+            <t t-set="opt_wsale_filter_tags" t-value="False"/>
+        </xpath>
+
+        <!-- Force l'affichage de la sidebar même quand il n'y a aucun résultat.
+             Par défaut, hasLeftColumn = opt_wsale_categories or opt_wsale_attributes.
+             Comme on a désactivé les catégories et qu'il n'y a pas d'attributs de variantes,
+             la sidebar disparaîtrait sans ce remplacement, empêchant l'utilisateur de
+             décocher ses filtres après une recherche sans résultat. -->
+        <xpath expr="//t[@t-set='hasLeftColumn']" position="replace">
+            <t t-set="hasLeftColumn" t-value="opt_wsale_categories or opt_wsale_attributes or all_regions or all_types_article or traitement_thermique_options or all_familles_fromage"/>
+        </xpath>
+
+        <!-- Injecte nos 4 filtres custom directement dans la sidebar, juste avant
+             la zone de glisser-déposer du bas (sidebar_dropzone_at_bottom).
+             On utilise un formulaire indépendant (class="js_attributes") plutôt que
+             d'injecter dans product_attribute_filters_form, car ce dernier est entouré
+             d'un t-if="attributes or all_tags" qui le masque quand 0 produit est trouvé.
+             L'action keep() préserve les autres paramètres d'URL (recherche, tri, etc.)
+             et ne remet à zéro que nos 4 paramètres avant d'y ajouter les cases cochées. -->
+        <xpath expr="//t[@t-call='website_sale.sidebar_dropzone_at_bottom']" position="before">
+            <form class="js_attributes position-relative mb-2"
+                  method="get"
+                  t-att-action="keep(region_ids=0, type_article_ids=0, traitement_thermique=0, famille_fromage_ids=0)">
+
+                <!-- Filtre : Région d'origine -->
+                <div t-if="all_regions" class="accordion-item">
+                    <div class="accordion-header h6 mb-0">
+                        <button class="accordion-button px-0 bg-transparent shadow-none"
+                                type="button"
+                                data-bs-toggle="collapse"
+                                aria-expanded="true"
+                                data-bs-target="#is_wsale_region_inner"
+                                aria-controls="is_wsale_region_inner">
+                            <b>Région d'origine</b>
+                        </button>
+                    </div>
+                    <div id="is_wsale_region_inner" class="accordion-collapse collapse show">
+                        <div class="flex-column mb-3">
+                            <t t-foreach="all_regions" t-as="region">
+                                <div class="form-check mb-1">
+                                    <input type="checkbox"
+                                           name="region_ids"
+                                           class="form-check-input"
+                                           t-attf-id="region_#{region.id}"
+                                           t-att-value="region.id"
+                                           t-att-checked="'checked' if region.id in active_region_ids else None"
+                                    />
+                                    <label class="form-check-label fw-normal"
+                                           t-attf-for="region_#{region.id}"
+                                           t-out="region.name"/>
+                                </div>
+                            </t>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Filtre : Type d'article -->
+                <div t-if="all_types_article" class="accordion-item">
+                    <div class="accordion-header h6 mb-0">
+                        <button class="accordion-button px-0 bg-transparent shadow-none"
+                                type="button"
+                                data-bs-toggle="collapse"
+                                aria-expanded="true"
+                                data-bs-target="#is_wsale_type_article_inner"
+                                aria-controls="is_wsale_type_article_inner">
+                            <b>Type d'article</b>
+                        </button>
+                    </div>
+                    <div id="is_wsale_type_article_inner" class="accordion-collapse collapse show">
+                        <div class="flex-column mb-3">
+                            <t t-foreach="all_types_article" t-as="type_art">
+                                <div class="form-check mb-1">
+                                    <input type="checkbox"
+                                           name="type_article_ids"
+                                           class="form-check-input"
+                                           t-attf-id="type_article_#{type_art.id}"
+                                           t-att-value="type_art.id"
+                                           t-att-checked="'checked' if type_art.id in active_type_article_ids else None"
+                                    />
+                                    <label class="form-check-label fw-normal"
+                                           t-attf-for="type_article_#{type_art.id}"
+                                           t-out="type_art.name"/>
+                                </div>
+                            </t>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Filtre : Traitement thermique -->
+                <div t-if="traitement_thermique_options" class="accordion-item">
+                    <div class="accordion-header h6 mb-0">
+                        <button class="accordion-button px-0 bg-transparent shadow-none"
+                                type="button"
+                                data-bs-toggle="collapse"
+                                aria-expanded="true"
+                                data-bs-target="#is_wsale_traitement_inner"
+                                aria-controls="is_wsale_traitement_inner">
+                            <b>Traitement thermique</b>
+                        </button>
+                    </div>
+                    <div id="is_wsale_traitement_inner" class="accordion-collapse collapse show">
+                        <div class="flex-column mb-3">
+                            <t t-foreach="traitement_thermique_options" t-as="option">
+                                <div class="form-check mb-1">
+                                    <input type="checkbox"
+                                           name="traitement_thermique"
+                                           class="form-check-input"
+                                           t-attf-id="traitement_#{option[0]}"
+                                           t-att-value="option[0]"
+                                           t-att-checked="'checked' if option[0] in active_traitement_thermique else None"
+                                    />
+                                    <label class="form-check-label fw-normal"
+                                           t-attf-for="traitement_#{option[0]}">
+                                        <t t-out="option[1]"/>
+                                    </label>
+                                </div>
+                            </t>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Filtre : Famille de fromage -->
+                <div t-if="all_familles_fromage" class="accordion-item">
+                    <div class="accordion-header h6 mb-0">
+                        <button class="accordion-button px-0 bg-transparent shadow-none"
+                                type="button"
+                                data-bs-toggle="collapse"
+                                aria-expanded="true"
+                                data-bs-target="#is_wsale_famille_inner"
+                                aria-controls="is_wsale_famille_inner">
+                            <b>Famille de fromage</b>
+                        </button>
+                    </div>
+                    <div id="is_wsale_famille_inner" class="accordion-collapse collapse show">
+                        <div class="flex-column mb-3">
+                            <t t-foreach="all_familles_fromage" t-as="famille">
+                                <div class="form-check mb-1">
+                                    <input type="checkbox"
+                                           name="famille_fromage_ids"
+                                           class="form-check-input"
+                                           t-attf-id="famille_#{famille.id}"
+                                           t-att-value="famille.id"
+                                           t-att-checked="'checked' if famille.id in active_famille_fromage_ids else None"
+                                    />
+                                    <label class="form-check-label fw-normal"
+                                           t-attf-for="famille_#{famille.id}"
+                                           t-out="famille.name"/>
+                                </div>
+                            </t>
+                        </div>
+                    </div>
+                </div>
+
+            </form>
+        </xpath>
+    </template>
+
+</odoo>

@@ -1,7 +1,13 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 access_is_region_origine_user,is.region.origine user,model_is_region_origine,base.group_user,1,0,0,0
+access_is_region_origine_portal,is.region.origine portal,model_is_region_origine,base.group_portal,1,0,0,0
+access_is_region_origine_public,is.region.origine public,model_is_region_origine,base.group_public,1,0,0,0
 access_is_region_origine_system,is.region.origine system,model_is_region_origine,base.group_system,1,1,1,1
 access_is_famille_fromage_user,is.famille.fromage user,model_is_famille_fromage,base.group_user,1,0,0,0
+access_is_famille_fromage_portal,is.famille.fromage portal,model_is_famille_fromage,base.group_portal,1,0,0,0
+access_is_famille_fromage_public,is.famille.fromage public,model_is_famille_fromage,base.group_public,1,0,0,0
 access_is_famille_fromage_system,is.famille.fromage system,model_is_famille_fromage,base.group_system,1,1,1,1
 access_is_type_article_user,is.type.article user,model_is_type_article,base.group_user,1,0,0,0
+access_is_type_article_portal,is.type.article portal,model_is_type_article,base.group_portal,1,0,0,0
+access_is_type_article_public,is.type.article public,model_is_type_article,base.group_public,1,0,0,0
 access_is_type_article_system,is.type.article system,model_is_type_article,base.group_system,1,1,1,1

@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from odoo import api, fields, models
+from odoo.fields import Domain
 
 _COLISAGE = [
     ('1', 'Colis'),
@@ -88,4 +89,34 @@ class ProductTemplate(models.Model):
         
         return visible_products
 
+    def _search_get_detail(self, website, order, options):
+        result = super()._search_get_detail(website, order, options)
+        domains = result.get('base_domain', [])
+
+        region_ids = options.get('region_ids') or []
+        if isinstance(region_ids, str):
+            region_ids = [int(x) for x in region_ids.split(',') if x]
+        if region_ids:
+            domains.append(Domain('is_region_id', 'in', region_ids))
+
+        type_article_ids = options.get('type_article_ids') or []
+        if isinstance(type_article_ids, str):
+            type_article_ids = [int(x) for x in type_article_ids.split(',') if x]
+        if type_article_ids:
+            domains.append(Domain('is_type_article_id', 'in', type_article_ids))
+
+        traitement_thermique = options.get('traitement_thermique') or []
+        if isinstance(traitement_thermique, str):
+            traitement_thermique = [x for x in traitement_thermique.split(',') if x]
+        if traitement_thermique:
+            domains.append(Domain('is_traitement_thermique', 'in', traitement_thermique))
+
+        famille_fromage_ids = options.get('famille_fromage_ids') or []
+        if isinstance(famille_fromage_ids, str):
+            famille_fromage_ids = [int(x) for x in famille_fromage_ids.split(',') if x]
+        if famille_fromage_ids:
+            domains.append(Domain('is_famille_fromage_id', 'in', famille_fromage_ids))
+
+        result['base_domain'] = domains
+        return result
 
