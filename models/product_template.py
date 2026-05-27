@@ -8,6 +8,12 @@ _COLISAGE = [
     ('4', '1/4 colis'),
 ]
 
+_TRAITEMENT_THERMIQUE = [
+    ('laitcru', 'Lait Cru'),
+    ('laitthermise', 'Lait Thermise'),
+    ('laitpasteurisé', 'Lait Pasteurise'),
+]
+
 
 class ProductTemplate(models.Model):
     _inherit = 'product.template'
@@ -16,6 +22,11 @@ class ProductTemplate(models.Model):
     is_nb_pieces_par_colis = fields.Integer(string='Nb Pièces / colis', tracking=True)
     is_poids_net_colis     = fields.Float(string='Poids net colis (Kg)', digits='Stock Weight', tracking=True)
     is_prix_colis          = fields.Float(string='Prix colis', digits='Product Price', compute='_compute_is_prix_colis')
+
+    is_region_id          = fields.Many2one('is.region.origine', string="Région d'origine")
+    is_type_article_id    = fields.Many2one('is.type.article', string='Type article')
+    is_traitement_thermique = fields.Selection(string='Traitement Thermique', selection=_TRAITEMENT_THERMIQUE)
+    is_famille_fromage_id = fields.Many2one('is.famille.fromage', string='Famille de fromage')
 
     @api.depends('uom_id', 'is_nb_pieces_par_colis', 'is_poids_net_colis')
     def _compute_is_prix_colis(self):

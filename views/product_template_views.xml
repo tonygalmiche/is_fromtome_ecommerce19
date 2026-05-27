@@ -1,6 +1,114 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
+    <!-- is.region.origine -->
+    <record id="is_region_origine_tree_view" model="ir.ui.view">
+        <field name="name">is.region.origine.tree</field>
+        <field name="model">is.region.origine</field>
+        <field name="arch" type="xml">
+            <list editable="bottom">
+                <field name="name"/>
+            </list>
+        </field>
+    </record>
+    <record id="is_region_origine_form_view" model="ir.ui.view">
+        <field name="name">is.region.origine.form</field>
+        <field name="model">is.region.origine</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    <record id="is_region_origine_action" model="ir.actions.act_window">
+        <field name="name">Régions d'origine</field>
+        <field name="res_model">is.region.origine</field>
+        <field name="view_mode">list,form</field>
+    </record>
+    <menuitem
+        id="is_region_origine_menu"
+        name="Régions d'origine"
+        parent="website.menu_website_global_configuration"
+        sequence="50"
+        action="is_region_origine_action"
+    />
+
+    <!-- is.famille.fromage -->
+    <record id="is_famille_fromage_tree_view" model="ir.ui.view">
+        <field name="name">is.famille.fromage.tree</field>
+        <field name="model">is.famille.fromage</field>
+        <field name="arch" type="xml">
+            <list editable="bottom">
+                <field name="name"/>
+            </list>
+        </field>
+    </record>
+    <record id="is_famille_fromage_form_view" model="ir.ui.view">
+        <field name="name">is.famille.fromage.form</field>
+        <field name="model">is.famille.fromage</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    <record id="is_famille_fromage_action" model="ir.actions.act_window">
+        <field name="name">Familles de fromage</field>
+        <field name="res_model">is.famille.fromage</field>
+        <field name="view_mode">list,form</field>
+    </record>
+    <menuitem
+        id="is_famille_fromage_menu"
+        name="Familles de fromage"
+        parent="website.menu_website_global_configuration"
+        sequence="51"
+        action="is_famille_fromage_action"
+    />
+
+    <!-- is.type.article -->
+    <record id="is_type_article_tree_view" model="ir.ui.view">
+        <field name="name">is.type.article.tree</field>
+        <field name="model">is.type.article</field>
+        <field name="arch" type="xml">
+            <list editable="bottom">
+                <field name="name"/>
+            </list>
+        </field>
+    </record>
+    <record id="is_type_article_form_view" model="ir.ui.view">
+        <field name="name">is.type.article.form</field>
+        <field name="model">is.type.article</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    <record id="is_type_article_action" model="ir.actions.act_window">
+        <field name="name">Types article</field>
+        <field name="res_model">is.type.article</field>
+        <field name="view_mode">list,form</field>
+    </record>
+    <menuitem
+        id="is_type_article_menu"
+        name="Types article"
+        parent="website.menu_website_global_configuration"
+        sequence="52"
+        action="is_type_article_action"
+    />
+
     <record id="product_template_form_inherit_colisage" model="ir.ui.view">
         <field name="name">product.template.form.inherit.colisage</field>
         <field name="model">product.template</field>
@@ -11,6 +119,10 @@
                 <field name="is_colisage"/>
                 <field name="is_nb_pieces_par_colis"/>
                 <field name="is_poids_net_colis"/>
+                <field name="is_region_id"/>
+                <field name="is_type_article_id"/>
+                <field name="is_traitement_thermique"/>
+                <field name="is_famille_fromage_id"/>
             </field>
         </field>
     </record>
@@ -25,6 +137,20 @@
                 <field name="is_colisage" optional="show"/>
                 <field name="is_nb_pieces_par_colis" optional="show"/>
                 <field name="is_poids_net_colis" optional="show"/>
+            </field>
+        </field>
+    </record>
+
+    <record id="product_template_list_inherit_website_sale" model="ir.ui.view">
+        <field name="name">product.template.list.inherit.website_sale</field>
+        <field name="model">product.template</field>
+        <field name="inherit_id" ref="website_sale.product_template_view_tree_website_sale"/>
+        <field name="arch" type="xml">
+            <field name="public_categ_ids" position="after">
+                <field name="is_region_id" optional="show"/>
+                <field name="is_type_article_id" optional="show"/>
+                <field name="is_traitement_thermique" optional="show"/>
+                <field name="is_famille_fromage_id" optional="show"/>
             </field>
         </field>
     </record>
@@ -84,6 +210,22 @@
                         <tr>
                             <th class="text-muted fw-normal">Poids net colis (Kg)</th>
                             <td><t t-esc="'%.3g' % product.is_poids_net_colis"/></td>
+                        </tr>
+                        <tr t-if="product.is_region_id">
+                            <th class="text-muted fw-normal">Région d'origine</th>
+                            <td><t t-esc="product.is_region_id.name"/></td>
+                        </tr>
+                        <tr t-if="product.is_type_article_id">
+                            <th class="text-muted fw-normal">Type article</th>
+                            <td><t t-esc="product.is_type_article_id.name"/></td>
+                        </tr>
+                        <tr t-if="product.is_traitement_thermique">
+                            <th class="text-muted fw-normal">Traitement thermique</th>
+                            <td><t t-esc="product._fields['is_traitement_thermique'].convert_to_export(product.is_traitement_thermique, product)"/></td>
+                        </tr>
+                        <tr t-if="product.is_famille_fromage_id">
+                            <th class="text-muted fw-normal">Famille de fromage</th>
+                            <td><t t-esc="product.is_famille_fromage_id.name"/></td>
                         </tr>
                      </tbody>
                 </table>

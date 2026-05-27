@@ -18,6 +18,7 @@ InfoSaône - Module Odoo 19 de e-commerce pour Fromtome
         'payment',
     ],
     'data' : [
+        'security/ir.model.access.csv',
         'views/payment_transaction_views.xml',
         'views/product_template_views.xml',
     ],
