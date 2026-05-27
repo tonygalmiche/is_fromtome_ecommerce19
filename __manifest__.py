@@ -13,6 +13,7 @@ InfoSaône - Module Odoo 19 de e-commerce pour Fromtome
     'depends'    : [
         'base',
         'product',
+        'uom',
         'website_sale',
         'payment',
     ],
@@ -22,7 +23,11 @@ InfoSaône - Module Odoo 19 de e-commerce pour Fromtome
     ],
     "assets": {
         "web.assets_backend": [
-            "is_fromtome_ecommerce19/static/src/**/*",
+            "is_fromtome_ecommerce19/static/src/scss/**/*",
+        ],
+        "web.assets_frontend": [
+            "is_fromtome_ecommerce19/static/src/js/nb_colis.js",
+            "is_fromtome_ecommerce19/static/src/scss/website_sale.scss",
         ],
     },
     'license'     : 'LGPL-3',

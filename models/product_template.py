@@ -28,6 +28,27 @@ class ProductTemplate(models.Model):
             qty_colis = obj.is_poids_net_colis if obj.uom_id.name == 'kg' else obj.is_nb_pieces_par_colis
             obj.is_prix_colis = unit_price * qty_colis
 
+    def _get_qty_per_colis(self):
+        """Retourne la quantité (pièces ou kg) contenue dans un colis."""
+        self.ensure_one()
+        return self.is_poids_net_colis if self.uom_id.name == 'kg' else self.is_nb_pieces_par_colis
+
+    def _get_combination_info(self, combination=False, product_id=False, add_qty=1.0, uom_id=False, **kwargs):
+        combination_info = super()._get_combination_info(
+            combination=combination,
+            product_id=product_id,
+            add_qty=add_qty,
+            uom_id=uom_id,
+            **kwargs,
+        )
+        if self.env.context.get('website_id'):
+            qty_per_colis = self._get_qty_per_colis()
+            if qty_per_colis:
+                for key in ('price', 'list_price'):
+                    if combination_info.get(key):
+                        combination_info[key] = combination_info[key] * qty_per_colis
+        return combination_info
+
     def _filter_products_with_pricelist_price(self):
         """
         Filtre les produits dont le prix selon la liste de prix actuelle est supérieur à 0.

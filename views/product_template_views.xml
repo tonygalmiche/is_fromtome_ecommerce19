@@ -31,11 +31,42 @@
 
     <template id="product_price_uom" name="Unité sur prix fiche produit" inherit_id="website_sale.product_price">
         <xpath expr="//div[@name='product_price_container']" position="inside">
-            <small class="text-muted">/ <t t-esc="product.uom_id.name"/>
-                <t t-if="product.is_prix_colis"> soit <t t-esc="'%.2f' % product.is_prix_colis"/> € / colis</t>
+            <t t-set="qty_per_colis" t-value="product.is_poids_net_colis if product.uom_id.name == 'kg' else product.is_nb_pieces_par_colis"/>
+            <small class="text-muted">/ Colis
+                <t t-if="qty_per_colis">
+                    soit <t t-esc="'%.3g' % qty_per_colis"/> <t t-esc="product.uom_id.name"/>
+                    à <t t-esc="'%.2f' % (combination_info['price'] / qty_per_colis)"/> €/<t t-esc="product.uom_id.name"/>
+                </t>
             </small>
         </xpath>
     </template>
+
+    <template id="product_nb_colis" name="Affichage Colis" inherit_id="website_sale.cta_wrapper">
+        <xpath expr="//a[@id='add_to_cart']" position="before">
+            <span
+                class="text-muted small is_qty_colis_display"
+                t-att-data-qty-per-colis="product.is_poids_net_colis if product.uom_id.name == 'kg' else product.is_nb_pieces_par_colis"
+                t-att-data-uom="product.uom_id.name"
+            />
+        </xpath>
+    </template>
+
+    <template id="cart_nb_colis" name="Affichage Colis Panier" inherit_id="website_sale.cart_lines">
+        <xpath expr="//div[@name='o_wsale_cart_line_button_container_mobile']" position="before">
+            <t t-set="qty_per_colis" t-value="line.product_id.is_poids_net_colis if line.product_id.uom_id.name == 'kg' else line.product_id.is_nb_pieces_par_colis"/>
+            <div t-if="not is_combo and qty_per_colis"
+                class="d-flex justify-content-end is_nb_colis_cart_display">
+                <small class="text-muted text-nowrap">
+                    <t t-set="uom" t-value="line.product_id.uom_id.name"/>
+                    <t t-set="qty_total" t-value="line._get_displayed_quantity() * qty_per_colis"/>
+                    Colis soit <t t-esc="'%.3g' % qty_total"/> <t t-esc="uom"/>
+                    à <t t-esc="'%.2f' % (line.price_unit / qty_per_colis)"/> €/<t t-esc="uom"/>
+                </small>
+            </div>
+        </xpath>
+    </template>
+
+
 
     <template id="product_colisage_info" name="Colisage Info" inherit_id="website_sale.product">
         <xpath expr="//div[hasclass('o_wsale_product_details_content_section_cta')]" position="before">
@@ -46,11 +77,11 @@
                             <th class="text-muted fw-normal" style="width: 55%;">Code</th>
                             <td><t t-esc="product.default_code"/></td>
                         </tr>
-                        <tr t-if="product.is_nb_pieces_par_colis">
+                        <tr>
                             <th class="text-muted fw-normal">Nb pièces / colis</th>
                             <td><t t-esc="product.is_nb_pieces_par_colis"/></td>
                         </tr>
-                        <tr t-if="product.is_poids_net_colis">
+                        <tr>
                             <th class="text-muted fw-normal">Poids net colis (Kg)</th>
                             <td><t t-esc="'%.3g' % product.is_poids_net_colis"/></td>
                         </tr>
@@ -63,14 +94,37 @@
         <xpath expr="//h2[hasclass('o_wsale_products_item_title')]" position="attributes">
             <attribute name="style">font-size: 0.9rem;</attribute>
         </xpath>
-        <xpath expr="//div[hasclass('product_price')]" position="attributes">
-            <attribute name="style">font-size: 0.9rem;</attribute>
-        </xpath>
-        <xpath expr="//div[hasclass('product_price')]" position="inside">
-            <small class="text-muted">/<t t-esc="product.uom_id.name"/>
-                <t t-if="product.is_prix_colis"> soit <t t-esc="'%.2f' % product.is_prix_colis"/>€/colis</t>
-            </small>
+        <xpath expr="//div[hasclass('product_price')]" position="replace">
+            <t t-set="qty_per_colis" t-value="product.is_poids_net_colis if product.uom_id.name == 'kg' else product.is_nb_pieces_par_colis"/>
+            <t t-if="qty_per_colis and product.is_prix_colis">
+                <div class="product_price" aria-label="Price information" style="font-size: 0.9rem;">
+                    <span class="mb-0 fw-bold" aria-label="Sale price">
+                        <t t-esc="'%.2f' % product.is_prix_colis"/> €
+                    </span>
+                    <small class="text-muted">
+                        / Colis soit <t t-esc="'%.3g' % qty_per_colis"/> <t t-esc="product.uom_id.name"/>
+                        à <t t-esc="'%.2f' % (product.is_prix_colis / qty_per_colis)"/> €/<t t-esc="product.uom_id.name"/>
+                    </small>
+                </div>
+            </t>
+            <t t-else="">
+                <t t-set="template_price_vals" t-value="get_product_prices(product)"/>
+                <div class="product_price" aria-label="Price information" style="font-size: 0.9rem;">
+                    <span
+                        class="mb-0 fw-bold"
+                        aria-label="Sale price"
+                        t-if="template_price_vals['price_reduce'] or not website.prevent_zero_price_sale"
+                        t-out="template_price_vals['price_reduce']"
+                        t-options="{'widget': 'monetary', 'display_currency': website.currency_id}"
+                    />
+                </div>
+            </t>
         </xpath>
     </template>
-
+    <record id="catalog_uom_menu" model="ir.ui.menu">
+        <field name="name">Unités de mesure</field>
+        <field name="parent_id" ref="website_sale.menu_catalog"/>
+        <field name="action" eval="'ir.actions.act_window,' + str(ref('uom.product_uom_form_action'))"/>
+        <field name="sequence">8</field>
+    </record>
 </odoo>
