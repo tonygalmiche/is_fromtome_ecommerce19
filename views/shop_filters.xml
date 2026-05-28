@@ -37,6 +37,13 @@
             <t t-set="hasLeftColumn" t-value="opt_wsale_categories or opt_wsale_attributes or all_regions or all_types_article or traitement_thermique_options or all_familles_fromage"/>
         </xpath>
 
+        <!-- Ajoute le nombre de produits après "Tous les produits" -->
+        <xpath expr="//h1[hasclass('o_wsale_shop_title')]" position="replace">
+            <h1 class="o_wsale_shop_title h4-fs" t-if="not category and not search">
+                Tous les produits <small class="text-muted fs-6">(<t t-out="search_count"/>)</small>
+            </h1>
+        </xpath>
+
         <!-- Injecte nos 4 filtres custom directement dans la sidebar, juste avant
              la zone de glisser-déposer du bas (sidebar_dropzone_at_bottom).
              On utilise un formulaire indépendant (class="js_attributes") plutôt que
