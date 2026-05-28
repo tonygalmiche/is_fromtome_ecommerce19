@@ -1,1 +1,10 @@
+// Chevron des filtres sidebar boutique
+.js_attributes .accordion-button .is-filter-chevron {
+    transition: transform 0.2s ease;
+    flex-shrink: 0;
+}
+
+.js_attributes .accordion-button.collapsed .is-filter-chevron {
+    transform: rotate(-90deg);
+}
 

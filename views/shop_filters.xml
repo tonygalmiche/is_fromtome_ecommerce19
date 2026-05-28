@@ -52,16 +52,17 @@
                 <!-- Filtre : Région d'origine -->
                 <div t-if="all_regions" class="accordion-item">
                     <div class="accordion-header h6 mb-0">
-                        <button class="accordion-button px-0 bg-transparent shadow-none"
+                        <button class="accordion-button px-0 bg-transparent shadow-none d-flex align-items-center collapsed"
                                 type="button"
                                 data-bs-toggle="collapse"
-                                aria-expanded="true"
+                                aria-expanded="false"
                                 data-bs-target="#is_wsale_region_inner"
                                 aria-controls="is_wsale_region_inner">
                             <b>Région d'origine</b>
+                            <i class="fa fa-chevron-down ms-auto is-filter-chevron"/>
                         </button>
                     </div>
-                    <div id="is_wsale_region_inner" class="accordion-collapse collapse show">
+                    <div id="is_wsale_region_inner" class="accordion-collapse collapse">
                         <div class="flex-column mb-3">
                             <t t-foreach="all_regions" t-as="region">
                                 <div class="form-check mb-1">
@@ -84,16 +85,17 @@
                 <!-- Filtre : Type d'article -->
                 <div t-if="all_types_article" class="accordion-item">
                     <div class="accordion-header h6 mb-0">
-                        <button class="accordion-button px-0 bg-transparent shadow-none"
+                        <button class="accordion-button px-0 bg-transparent shadow-none d-flex align-items-center collapsed"
                                 type="button"
                                 data-bs-toggle="collapse"
-                                aria-expanded="true"
+                                aria-expanded="false"
                                 data-bs-target="#is_wsale_type_article_inner"
                                 aria-controls="is_wsale_type_article_inner">
                             <b>Type d'article</b>
+                            <i class="fa fa-chevron-down ms-auto is-filter-chevron"/>
                         </button>
                     </div>
-                    <div id="is_wsale_type_article_inner" class="accordion-collapse collapse show">
+                    <div id="is_wsale_type_article_inner" class="accordion-collapse collapse">
                         <div class="flex-column mb-3">
                             <t t-foreach="all_types_article" t-as="type_art">
                                 <div class="form-check mb-1">
@@ -116,16 +118,17 @@
                 <!-- Filtre : Traitement thermique -->
                 <div t-if="traitement_thermique_options" class="accordion-item">
                     <div class="accordion-header h6 mb-0">
-                        <button class="accordion-button px-0 bg-transparent shadow-none"
+                        <button class="accordion-button px-0 bg-transparent shadow-none d-flex align-items-center collapsed"
                                 type="button"
                                 data-bs-toggle="collapse"
-                                aria-expanded="true"
+                                aria-expanded="false"
                                 data-bs-target="#is_wsale_traitement_inner"
                                 aria-controls="is_wsale_traitement_inner">
                             <b>Traitement thermique</b>
+                            <i class="fa fa-chevron-down ms-auto is-filter-chevron"/>
                         </button>
                     </div>
-                    <div id="is_wsale_traitement_inner" class="accordion-collapse collapse show">
+                    <div id="is_wsale_traitement_inner" class="accordion-collapse collapse">
                         <div class="flex-column mb-3">
                             <t t-foreach="traitement_thermique_options" t-as="option">
                                 <div class="form-check mb-1">
@@ -149,16 +152,17 @@
                 <!-- Filtre : Famille de fromage -->
                 <div t-if="all_familles_fromage" class="accordion-item">
                     <div class="accordion-header h6 mb-0">
-                        <button class="accordion-button px-0 bg-transparent shadow-none"
+                        <button class="accordion-button px-0 bg-transparent shadow-none d-flex align-items-center collapsed"
                                 type="button"
                                 data-bs-toggle="collapse"
-                                aria-expanded="true"
+                                aria-expanded="false"
                                 data-bs-target="#is_wsale_famille_inner"
                                 aria-controls="is_wsale_famille_inner">
                             <b>Famille de fromage</b>
+                            <i class="fa fa-chevron-down ms-auto is-filter-chevron"/>
                         </button>
                     </div>
-                    <div id="is_wsale_famille_inner" class="accordion-collapse collapse show">
+                    <div id="is_wsale_famille_inner" class="accordion-collapse collapse">
                         <div class="flex-column mb-3">
                             <t t-foreach="all_familles_fromage" t-as="famille">
                                 <div class="form-check mb-1">
