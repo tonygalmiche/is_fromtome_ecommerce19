@@ -118,11 +118,32 @@ class WebsiteSaleFromtome(WebsiteSale):
         active_traitement = [x for x in args.getlist('traitement_thermique') if x]
         active_famille_ids = [int(x) for x in args.getlist('famille_fromage_ids') if x]
 
+        any_filter_active = any([active_region_ids, active_type_article_ids, active_traitement, active_famille_ids])
+
+        if any_filter_active:
+            # Calculer les options disponibles à partir des produits déjà filtrés
+            products = values.get('products', env['product.template'].sudo())
+
+            available_region_ids = products.mapped('is_region_id').ids
+            available_type_article_ids = products.mapped('is_type_article_id').ids
+            available_traitement = list({p.is_traitement_thermique for p in products if p.is_traitement_thermique})
+            available_famille_ids = products.mapped('is_famille_fromage_id').ids
+
+            all_regions = env['is.region.origine'].sudo().search([('id', 'in', available_region_ids)])
+            all_types_article = env['is.type.article'].sudo().search([('id', 'in', available_type_article_ids)])
+            all_familles_fromage = env['is.famille.fromage'].sudo().search([('id', 'in', available_famille_ids)])
+            traitement_options = [(k, v) for k, v in _TRAITEMENT_THERMIQUE_LABELS.items() if k in available_traitement]
+        else:
+            all_regions = env['is.region.origine'].sudo().search([])
+            all_types_article = env['is.type.article'].sudo().search([])
+            all_familles_fromage = env['is.famille.fromage'].sudo().search([])
+            traitement_options = list(_TRAITEMENT_THERMIQUE_LABELS.items())
+
         res.update({
-            'all_regions': env['is.region.origine'].sudo().search([]),
-            'all_types_article': env['is.type.article'].sudo().search([]),
-            'all_familles_fromage': env['is.famille.fromage'].sudo().search([]),
-            'traitement_thermique_options': list(_TRAITEMENT_THERMIQUE_LABELS.items()),
+            'all_regions': all_regions,
+            'all_types_article': all_types_article,
+            'all_familles_fromage': all_familles_fromage,
+            'traitement_thermique_options': traitement_options,
             'active_region_ids': active_region_ids,
             'active_type_article_ids': active_type_article_ids,
             'active_traitement_thermique': active_traitement,
